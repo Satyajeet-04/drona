@@ -1,0 +1,37 @@
+cross-validated out-of-fold probabilities ...
+baseline test acc=0.9373 macroF1=0.9300
+out-of-fold agreement with annotation: 0.9393
+cleanlab flags 101/9158 = 1.1%
+
+=== AUDIT SAMPLE (highest-confidence complaints first) ===
+  [     card_services -> general_enquiry   ] Who can top up my accounts?
+  [   general_enquiry -> billing_charges   ] Is it a good time to exchange?
+  [   general_enquiry -> card_services     ] i am not a premium customer but i want a virtual card, how do i get it
+  [     card_services -> general_enquiry   ] Will my friend be able to top off my account?
+  [   payment_failure -> technical_app     ] Why can't I withdraw money?
+  [   general_enquiry -> card_services     ] Who can request disposable cards?
+  [   general_enquiry -> technical_app     ] Can I use this app for any currency?
+  [   general_enquiry -> technical_app     ] Can I exchange currencies?
+  [   payment_failure -> billing_charges   ] i do not know what this charge is for
+  [     technical_app -> card_services     ] How do I re-order a damaged card?
+  [     card_services -> payment_failure   ] Why can't I see my top up?
+  [     technical_app -> payment_failure   ] Today I was out eating and my card was declined. Why's that?
+  [   payment_failure -> general_enquiry   ] How long before a bank transfer shows up in the account?
+  [     card_services -> payment_failure   ] Should i reinstall the payment app?
+  [    fraud_security -> payment_failure   ] My money didnt go through after I transferred.
+  [   payment_failure -> billing_charges   ] I was double charged, and the second charge is showing as "pending". How long will it be b
+  [    fraud_security -> general_enquiry   ] Are there restrictions to transfers to certain accounts?
+  [   general_enquiry -> technical_app     ] Will my card work at all merchant locations?
+  [   payment_failure -> billing_charges   ] I think I was charged by mistake on my debit statement.
+  [   payment_failure -> general_enquiry   ] How long can an EU transfer take?
+  [   payment_failure -> fraud_security    ] What should I do to get transactions off of my account if I didn't make them?  My card mus
+  [    fraud_security -> payment_failure   ] I've tried numerous times to submit a transfer of funds. Why isn't it going through?
+  [   billing_charges -> payment_failure   ] I need some help figuring out what this strange payment is on my account. It's stays pendi
+  [   general_enquiry -> payment_failure   ] Money transfer help? How long?
+  [   payment_failure -> fraud_security    ] My wallet was taken and I see that someone is using my card!   Please help me!
+
+[drop]    n=9057 acc=0.9358 macroF1=0.9306
+[relabel] n=9158 acc=0.9124 macroF1=0.8982
+
+CLEANLAB_DONE
+EXIT=0

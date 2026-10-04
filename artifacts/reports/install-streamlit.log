@@ -1,0 +1,17 @@
+Resolved 36 packages in 1.19s
+Downloading streamlit (9.8MiB)
+Downloading pydeck (10.9MiB)
+ Downloaded streamlit
+ Downloaded pydeck
+Prepared 10 packages in 3.97s
+Installed 10 packages in 156ms
+ + altair==6.3.0
+ + itsdangerous==2.2.0
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + pydeck==0.9.3
+ + referencing==0.37.0
+ + rpds-py==2026.6.3
+ + streamlit==1.65.0
+ + toml==0.10.2
+ + watchdog==6.0.0

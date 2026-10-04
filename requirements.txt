@@ -1,0 +1,18 @@
+# DRONA environment. Install CPU-only torch from the PyTorch CPU index.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.8.0
+transformers==5.18.0
+onnxruntime==1.30.0
+onnx==1.23.1
+scikit-learn==1.9.1
+datasets==5.0.1
+fastapi==0.142.2
+uvicorn==0.54.0
+streamlit==1.65.0
+cleanlab==2.9.0
+optimum==2.3.0
+numpy==2.5.3
+pandas==3.0.6
+scipy
+joblib
+lxml

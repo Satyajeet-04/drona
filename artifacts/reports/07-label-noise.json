@@ -1,0 +1,279 @@
+{
+  "n_train": 9158,
+  "n_test": 1963,
+  "folds": 5,
+  "seed": 20261003,
+  "task": "coarse (10 classes present in data)",
+  "oof_agreement_with_annotation": 0.9393,
+  "n_flagged": 101,
+  "flagged_fraction": 0.011,
+  "audit_sample": [
+    {
+      "text": "Who can top up my accounts?",
+      "annotated_intent": "topping_up_by_card",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "Is it a good time to exchange?",
+      "annotated_intent": "exchange_rate",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "i am not a premium customer but i want a virtual card, how do i get it",
+      "annotated_intent": "disposable_card_limits",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "Will my friend be able to top off my account?",
+      "annotated_intent": "topping_up_by_card",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "Why can't I withdraw money?",
+      "annotated_intent": "declined_cash_withdrawal",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "technical_app"
+    },
+    {
+      "text": "Who can request disposable cards?",
+      "annotated_intent": "disposable_card_limits",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "Can I use this app for any currency?",
+      "annotated_intent": "supported_cards_and_currencies",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "technical_app"
+    },
+    {
+      "text": "Can I exchange currencies?",
+      "annotated_intent": "fiat_currency_support",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "technical_app"
+    },
+    {
+      "text": "i do not know what this charge is for",
+      "annotated_intent": "direct_debit_payment_not_recognised",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "How do I re-order a damaged card?",
+      "annotated_intent": "card_not_working",
+      "annotated_coarse": "technical_app",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "Why can't I see my top up?",
+      "annotated_intent": "topping_up_by_card",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "Today I was out eating and my card was declined. Why's that?",
+      "annotated_intent": "card_not_working",
+      "annotated_coarse": "technical_app",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "How long before a bank transfer shows up in the account?",
+      "annotated_intent": "balance_not_updated_after_bank_transfer",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "Should i reinstall the payment app?",
+      "annotated_intent": "contactless_not_working",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "My money didnt go through after I transferred.",
+      "annotated_intent": "beneficiary_not_allowed",
+      "annotated_coarse": "fraud_security",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "I was double charged, and the second charge is showing as \"pending\". How long will it be before I get my money back once the second charge has been refunded?",
+      "annotated_intent": "pending_card_payment",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "Are there restrictions to transfers to certain accounts?",
+      "annotated_intent": "beneficiary_not_allowed",
+      "annotated_coarse": "fraud_security",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "Will my card work at all merchant locations?",
+      "annotated_intent": "card_acceptance",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "technical_app"
+    },
+    {
+      "text": "I think I was charged by mistake on my debit statement.",
+      "annotated_intent": "direct_debit_payment_not_recognised",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "How long can an EU transfer take?",
+      "annotated_intent": "pending_transfer",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "What should I do to get transactions off of my account if I didn't make them?  My card must have been compromised and I need to freeze it asap!",
+      "annotated_intent": "card_payment_not_recognised",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "fraud_security"
+    },
+    {
+      "text": "I've tried numerous times to submit a transfer of funds. Why isn't it going through?",
+      "annotated_intent": "beneficiary_not_allowed",
+      "annotated_coarse": "fraud_security",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "I need some help figuring out what this strange payment is on my account. It's stays pending and won't go away.",
+      "annotated_intent": "extra_charge_on_statement",
+      "annotated_coarse": "billing_charges",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "Money transfer help? How long?",
+      "annotated_intent": "transfer_timing",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "My wallet was taken and I see that someone is using my card!   Please help me!",
+      "annotated_intent": "cash_withdrawal_not_recognised",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "fraud_security"
+    },
+    {
+      "text": "I have a new email.",
+      "annotated_intent": "edit_personal_details",
+      "annotated_coarse": "account_access",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "My Netflix subscription says that there is an issue with my card information, but I thought everything was fine. Why would it be declined?",
+      "annotated_intent": "card_not_working",
+      "annotated_coarse": "technical_app",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "I want this fee reversed from my account.",
+      "annotated_intent": "request_refund",
+      "annotated_coarse": "refund_chargeback",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "If I need more than cards will I have to pay a fee to receive them?",
+      "annotated_intent": "getting_spare_card",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "How long does it take for money to reach my account?",
+      "annotated_intent": "balance_not_updated_after_bank_transfer",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "What type of deposits do you accept into my account?",
+      "annotated_intent": "top_up_by_cash_or_cheque",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "Where is a ATM that accepts Mastercard?",
+      "annotated_intent": "atm_support",
+      "annotated_coarse": "technical_app",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "I cannot find my credit card.",
+      "annotated_intent": "lost_or_stolen_card",
+      "annotated_coarse": "fraud_security",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "What are your policies for card transfers?",
+      "annotated_intent": "failed_transfer",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "How can someone add money to my account?",
+      "annotated_intent": "topping_up_by_card",
+      "annotated_coarse": "card_services",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "I wasn't charged the correct amount for an item I purchased, how can I fix this?",
+      "annotated_intent": "request_refund",
+      "annotated_coarse": "refund_chargeback",
+      "oof_prediction": "billing_charges"
+    },
+    {
+      "text": "how to get new card after atm eats it",
+      "annotated_intent": "card_swallowed",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "card_services"
+    },
+    {
+      "text": "I cant transfer money into my account",
+      "annotated_intent": "beneficiary_not_allowed",
+      "annotated_coarse": "fraud_security",
+      "oof_prediction": "general_enquiry"
+    },
+    {
+      "text": "how long dies it take for transfers to reflect on my balance",
+      "annotated_intent": "transfer_timing",
+      "annotated_coarse": "general_enquiry",
+      "oof_prediction": "payment_failure"
+    },
+    {
+      "text": "i did not get any money but still was charged",
+      "annotated_intent": "wrong_amount_of_cash_received",
+      "annotated_coarse": "payment_failure",
+      "oof_prediction": "billing_charges"
+    }
+  ],
+  "baseline": {
+    "accuracy": 0.9373408048904738,
+    "macro_f1": 0.9299932040566521,
+    "weighted_f1": 0.9372202876568396,
+    "macro_precision": 0.9496010842471373,
+    "macro_recall": 0.9127511169507464
+  },
+  "policy_drop": {
+    "n_train_after": 9057,
+    "accuracy": 0.9358125318390219,
+    "macro_f1": 0.9305926680729515,
+    "weighted_f1": 0.9356826769980474,
+    "macro_precision": 0.949426842781631,
+    "macro_recall": 0.9138801422800287,
+    "delta_accuracy": -0.0015,
+    "delta_macro_f1": 0.0006
+  },
+  "policy_relabel": {
+    "n_train_after": 9158,
+    "accuracy": 0.9123790117167601,
+    "macro_f1": 0.8981882603879707,
+    "weighted_f1": 0.9116609493671111,
+    "macro_precision": 0.9344526899258273,
+    "macro_recall": 0.8695047495978484,
+    "delta_accuracy": -0.025,
+    "delta_macro_f1": -0.0318
+  }
+}

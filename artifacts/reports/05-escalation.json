@@ -1,0 +1,244 @@
+{
+  "seed": 20261003,
+  "n_test": 1963,
+  "baseline_accuracy": 0.9470198675496688,
+  "disagreement_rate": 0.06571574121242996,
+  "escalated_n": 129,
+  "slice_cascade_accuracy": 0.6434108527131783,
+  "slice_agent_accuracy": 0.5968992248062015,
+  "best_margin": 0.6,
+  "margin_sweep": [
+    {
+      "margin": 0.0,
+      "overruled": 75,
+      "correct": 16,
+      "wrong": 59,
+      "slice_accuracy": 0.4109,
+      "end_to_end": 0.9317
+    },
+    {
+      "margin": 0.1,
+      "overruled": 63,
+      "correct": 13,
+      "wrong": 50,
+      "slice_accuracy": 0.4419,
+      "end_to_end": 0.9338
+    },
+    {
+      "margin": 0.2,
+      "overruled": 52,
+      "correct": 13,
+      "wrong": 39,
+      "slice_accuracy": 0.4961,
+      "end_to_end": 0.9373
+    },
+    {
+      "margin": 0.3,
+      "overruled": 42,
+      "correct": 10,
+      "wrong": 32,
+      "slice_accuracy": 0.5194,
+      "end_to_end": 0.9389
+    },
+    {
+      "margin": 0.45,
+      "overruled": 25,
+      "correct": 5,
+      "wrong": 20,
+      "slice_accuracy": 0.5426,
+      "end_to_end": 0.9404
+    },
+    {
+      "margin": 0.6,
+      "overruled": 16,
+      "correct": 4,
+      "wrong": 12,
+      "slice_accuracy": 0.5969,
+      "end_to_end": 0.944
+    }
+  ],
+  "end_to_end_with_agent": 0.9439633214467652,
+  "agent_latency_ms": 34.98501743361956,
+  "mean_trace_steps": 11.0,
+  "draft_fact_precision_mean": 1.0,
+  "drafts_with_invented_identifiers": 0,
+  "per_class": [
+    [
+      "technical_app",
+      78,
+      0.9315068493150684,
+      0.8717948717948718,
+      0.9006622516556292
+    ],
+    [
+      "fraud_security",
+      91,
+      0.9302325581395349,
+      0.8791208791208791,
+      0.903954802259887
+    ],
+    [
+      "card_services",
+      327,
+      0.937888198757764,
+      0.9235474006116208,
+      0.9306625577812019
+    ],
+    [
+      "general_enquiry",
+      300,
+      0.9188311688311688,
+      0.9433333333333334,
+      0.930921052631579
+    ],
+    [
+      "refund_chargeback",
+      62,
+      0.9824561403508771,
+      0.9032258064516129,
+      0.9411764705882353
+    ],
+    [
+      "other",
+      29,
+      0.9642857142857143,
+      0.9310344827586207,
+      0.9473684210526315
+    ],
+    [
+      "payment_failure",
+      552,
+      0.9379432624113475,
+      0.9583333333333334,
+      0.9480286738351255
+    ],
+    [
+      "billing_charges",
+      293,
+      0.9531772575250836,
+      0.9726962457337884,
+      0.9628378378378378
+    ],
+    [
+      "account_access",
+      116,
+      0.9739130434782609,
+      0.9655172413793104,
+      0.9696969696969697
+    ],
+    [
+      "kyc_verification",
+      115,
+      1.0,
+      0.9652173913043478,
+      0.9823008849557522
+    ]
+  ],
+  "coverage_curve": [
+    {
+      "threshold": 0.3,
+      "coverage": 0.9985,
+      "escalation_rate": 0.0015,
+      "accuracy_on_accepted": 0.948,
+      "projected_end_to_end": 0.948
+    },
+    {
+      "threshold": 0.35,
+      "coverage": 0.9939,
+      "escalation_rate": 0.0061,
+      "accuracy_on_accepted": 0.9513,
+      "projected_end_to_end": 0.9516
+    },
+    {
+      "threshold": 0.4,
+      "coverage": 0.9873,
+      "escalation_rate": 0.0127,
+      "accuracy_on_accepted": 0.9551,
+      "projected_end_to_end": 0.9557
+    },
+    {
+      "threshold": 0.45,
+      "coverage": 0.9791,
+      "escalation_rate": 0.0209,
+      "accuracy_on_accepted": 0.9584,
+      "projected_end_to_end": 0.9592
+    },
+    {
+      "threshold": 0.5,
+      "coverage": 0.9623,
+      "escalation_rate": 0.0377,
+      "accuracy_on_accepted": 0.9651,
+      "projected_end_to_end": 0.9664
+    },
+    {
+      "threshold": 0.55,
+      "coverage": 0.9353,
+      "escalation_rate": 0.0647,
+      "accuracy_on_accepted": 0.9717,
+      "projected_end_to_end": 0.9735
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 0.919,
+      "escalation_rate": 0.081,
+      "accuracy_on_accepted": 0.9756,
+      "projected_end_to_end": 0.9776
+    },
+    {
+      "threshold": 0.65,
+      "coverage": 0.8956,
+      "escalation_rate": 0.1044,
+      "accuracy_on_accepted": 0.9824,
+      "projected_end_to_end": 0.9842
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 0.867,
+      "escalation_rate": 0.133,
+      "accuracy_on_accepted": 0.9847,
+      "projected_end_to_end": 0.9868
+    },
+    {
+      "threshold": 0.75,
+      "coverage": 0.8324,
+      "escalation_rate": 0.1676,
+      "accuracy_on_accepted": 0.9878,
+      "projected_end_to_end": 0.9898
+    },
+    {
+      "threshold": 0.8,
+      "coverage": 0.7866,
+      "escalation_rate": 0.2134,
+      "accuracy_on_accepted": 0.989,
+      "projected_end_to_end": 0.9913
+    },
+    {
+      "threshold": 0.85,
+      "coverage": 0.7127,
+      "escalation_rate": 0.2873,
+      "accuracy_on_accepted": 0.9943,
+      "projected_end_to_end": 0.9959
+    },
+    {
+      "threshold": 0.9,
+      "coverage": 0.62,
+      "escalation_rate": 0.38,
+      "accuracy_on_accepted": 0.9959,
+      "projected_end_to_end": 0.9975
+    },
+    {
+      "threshold": 0.95,
+      "coverage": 0.489,
+      "escalation_rate": 0.511,
+      "accuracy_on_accepted": 0.999,
+      "projected_end_to_end": 0.9995
+    },
+    {
+      "threshold": 1.0,
+      "coverage": 0.0,
+      "escalation_rate": 1.0,
+      "accuracy_on_accepted": null,
+      "projected_end_to_end": 1.0
+    }
+  ]
+}

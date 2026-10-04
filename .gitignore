@@ -1,0 +1,25 @@
+# virtualenv — rebuilt by ./install-ml.sh, never committed
+.venv/
+
+# The DistilBERT comparison checkpoint (257 MB). GitHub rejects any single file
+# over 100 MB, and it is NOT needed to serve: the cascade loads
+# artifacts/models/cascade.joblib (1.6 MB), which IS committed. Only
+# drona.experiments.transformer_exp needs this, and it refits from scratch in
+# ~47 min on CPU:
+#     PYTHONPATH=src .venv/bin/python -m drona.experiments.transformer_exp
+# Every number it produced is already committed in artifacts/reports/.
+artifacts/models/distilbert-coarse/
+
+# Runtime state. Rebuilt as tickets are triaged; nothing reproducible lives here.
+data/drona.sqlite
+
+# scratch/ is a working directory kept empty on purpose
+scratch/
+
+# caches and interpreter noise
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# install log from a local machine — not evidence of anything
+install-ml.log

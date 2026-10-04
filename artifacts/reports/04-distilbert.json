@@ -1,0 +1,40 @@
+{
+  "model": "distilbert-base-uncased",
+  "max_len": 64,
+  "batch": 32,
+  "epochs": 2,
+  "lr": 2e-05,
+  "head_lr": 0.001,
+  "train_minutes": 47.18332855304082,
+  "history": [
+    {
+      "epoch": 0,
+      "val": {
+        "accuracy": 0.9317023445463812,
+        "macro_f1": 0.9220824784711172,
+        "weighted_f1": 0.9317476335593853,
+        "macro_precision": 0.9222235987418227,
+        "macro_recall": 0.9223129052746829
+      },
+      "minutes": 26.89302182594935
+    },
+    {
+      "epoch": 1,
+      "val": {
+        "accuracy": 0.9429153924566769,
+        "macro_f1": 0.9367015824659116,
+        "weighted_f1": 0.9429203846617376,
+        "macro_precision": 0.9361926746163045,
+        "macro_recall": 0.9381022120567588
+      },
+      "minutes": 45.42509667873382
+    }
+  ],
+  "test": {
+    "accuracy": 0.9490575649516046,
+    "macro_f1": 0.9406935881882686,
+    "weighted_f1": 0.9490520706631685,
+    "macro_precision": 0.9470524901820744,
+    "macro_recall": 0.9354058940624824
+  }
+}

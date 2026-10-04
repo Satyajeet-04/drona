@@ -1,0 +1,12 @@
+calibration n=1962  test n=1963  classes=10
+alpha=0.20  q=0.1265  coverage=0.8202 (target 0.80, shortfall -0.0202)  acc_on_accepted=1.0000  holds=True
+alpha=0.15  q=0.1868  coverage=0.8614 (target 0.85, shortfall -0.0114)  acc_on_accepted=1.0000  holds=True
+alpha=0.10  q=0.3032  coverage=0.9032 (target 0.90, shortfall -0.0032)  acc_on_accepted=1.0000  holds=True
+alpha=0.05  q=0.5758  coverage=0.9475 (target 0.95, shortfall +0.0025)  acc_on_accepted=0.9962  holds=True
+alpha=0.02  q=0.8669  coverage=0.9812 (target 0.98, shortfall -0.0012)  acc_on_accepted=0.9642  holds=True
+alpha=0.01  q=0.9437  coverage=0.9903 (target 0.99, shortfall -0.0003)  acc_on_accepted=0.9552  holds=True
+
+=== SUMMARY ===
+Conformal split-conformal prediction provides a finite-sample, distribution-free guarantee that the accepted set is correct at least (1 - alpha) of the time. Compare with the empirical coverage curve, which only describes the observed test set.
+CONFORMAL_DONE
+EXIT=0

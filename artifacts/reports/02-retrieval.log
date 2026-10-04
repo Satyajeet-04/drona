@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/satyajeet-rp/drona/src/drona/experiments/retrieval_exp.py", line 109, in <module>
+    main()
+  File "/home/satyajeet-rp/drona/src/drona/experiments/retrieval_exp.py", line 57, in main
+    nbrs = retriever.query(test_texts, k=15, view=view)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/satyajeet-rp/drona/src/drona/retrieval.py", line 115, in query
+    scores=np.asarray(data[row][np.argsort(-data[row])][:k]),
+                      ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: invalid index to scalar variable.

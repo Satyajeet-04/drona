@@ -1,0 +1,86 @@
+{
+  "task": "split conformal prediction on the fused calibrated cascade",
+  "conformal_reference": "Angelopoulos & Bates 2020, arXiv:1907.07509",
+  "noise_caveat": "Banking77 carries ~14% label noise at the 77-intent level (Ying & Thomas, ACL Insights 2022, insights-1.19). P(correct) is therefore capped below 1.0 by disagreement with the annotator, so even a perfect model cannot reach accuracy 1.0 and the conformal bound inherits that ceiling. Our cleanlab audit (07-label-noise) found only ~1.1% of COARSE labels disputed, so at the coarse level the practical ceiling is much higher than 0.86.",
+  "calibration_set": "val split (held out from training and from test)",
+  "levels": {
+    "alpha_0.20": {
+      "alpha": 0.2,
+      "threshold_q": 0.126508,
+      "nominal_coverage_1_minus_alpha": 0.8,
+      "realised_coverage": 0.8202,
+      "coverage_shortfall": -0.0202,
+      "realised_accuracy_on_accepted": 1.0,
+      "guarantee_holds": true,
+      "n_accepted": 1610,
+      "n_total": 1963,
+      "escalation_rate": 0.1798
+    },
+    "alpha_0.15": {
+      "alpha": 0.15,
+      "threshold_q": 0.186845,
+      "nominal_coverage_1_minus_alpha": 0.85,
+      "realised_coverage": 0.8614,
+      "coverage_shortfall": -0.0114,
+      "realised_accuracy_on_accepted": 1.0,
+      "guarantee_holds": true,
+      "n_accepted": 1691,
+      "n_total": 1963,
+      "escalation_rate": 0.1386
+    },
+    "alpha_0.10": {
+      "alpha": 0.1,
+      "threshold_q": 0.303175,
+      "nominal_coverage_1_minus_alpha": 0.9,
+      "realised_coverage": 0.9032,
+      "coverage_shortfall": -0.0032,
+      "realised_accuracy_on_accepted": 1.0,
+      "guarantee_holds": true,
+      "n_accepted": 1773,
+      "n_total": 1963,
+      "escalation_rate": 0.0968
+    },
+    "alpha_0.05": {
+      "alpha": 0.05,
+      "threshold_q": 0.575812,
+      "nominal_coverage_1_minus_alpha": 0.95,
+      "realised_coverage": 0.9475,
+      "coverage_shortfall": 0.0025,
+      "realised_accuracy_on_accepted": 0.9962,
+      "guarantee_holds": true,
+      "n_accepted": 1860,
+      "n_total": 1963,
+      "escalation_rate": 0.0525
+    },
+    "alpha_0.02": {
+      "alpha": 0.02,
+      "threshold_q": 0.866938,
+      "nominal_coverage_1_minus_alpha": 0.98,
+      "realised_coverage": 0.9812,
+      "coverage_shortfall": -0.0012,
+      "realised_accuracy_on_accepted": 0.9642,
+      "guarantee_holds": true,
+      "n_accepted": 1926,
+      "n_total": 1963,
+      "escalation_rate": 0.0188
+    },
+    "alpha_0.01": {
+      "alpha": 0.01,
+      "threshold_q": 0.943651,
+      "nominal_coverage_1_minus_alpha": 0.99,
+      "realised_coverage": 0.9903,
+      "coverage_shortfall": -0.0003,
+      "realised_accuracy_on_accepted": 0.9552,
+      "guarantee_holds": true,
+      "n_accepted": 1944,
+      "n_total": 1963,
+      "escalation_rate": 0.0097
+    }
+  },
+  "empirical_reference": {
+    "note": "from 03-fusion.json coverage_curve, for comparison",
+    "curve_points": 13,
+    "accuracy_on_accepted_at_90pct": 0.9824,
+    "threshold_at_90pct": 0.7635
+  }
+}

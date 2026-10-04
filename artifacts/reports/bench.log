@@ -1,0 +1,32 @@
+train 9158
+tok len mean 15.9 p50 13 p90 26 p95 35 p99 51 max 98
+  frac<=32: 0.937
+  frac<=48: 0.988
+  frac<=64: 0.998
+  frac<=96: 1.000
+  frac<=128: 1.000
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 1840.75it/s]
+[transformers] [1mDistilBertForSequenceClassification LOAD REPORT[0m from: distilbert-base-uncased
+Key                     | Status     | 
+------------------------+------------+-
+vocab_transform.bias    | UNEXPECTED | 
+vocab_layer_norm.weight | UNEXPECTED | 
+vocab_projector.bias    | UNEXPECTED | 
+vocab_transform.weight  | UNEXPECTED | 
+vocab_layer_norm.bias   | UNEXPECTED | 
+classifier.bias         | MISSING    | 
+pre_classifier.bias     | MISSING    | 
+classifier.weight       | MISSING    | 
+pre_classifier.weight   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+
+bs seq  s/step   3ep_min
+ 16   32   10.56      693
+ 16   64   14.44      508
+ 32   32   14.89      984
+ 32   64   26.04      563
+ 16   96   14.19      516
+BENCH_DONE

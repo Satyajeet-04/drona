@@ -1,0 +1,35 @@
+cascade end-to-end accuracy: 0.9470
+disagreement slice: 0.0657 of traffic, accuracy 0.6434
+
+agent invoked on 129 tickets
+
+on the escalated slice (n=129): cascade 0.6434
+
+margin sweep (agent overturns the cascade only if its evidence clears this margin):
+   margin  overruled  correct  wrong  slice_acc  end_to_end
+     0.00         75       16     59     0.4109      0.9317
+     0.10         63       13     50     0.4419      0.9338
+     0.20         52       13     39     0.4961      0.9373
+     0.30         42       10     32     0.5194      0.9389
+     0.45         25        5     20     0.5426      0.9404
+     0.60         16        4     12     0.5969      0.9440
+
+best margin=0.6: slice 0.6434 -> 0.5969, end-to-end 0.9470 -> 0.9440 (-0.0031)
+agent latency: 35.0 ms/ticket, mean trace 11.0 steps
+draft fact precision: mean 1.000, drafts with invented identifiers: 0
+
+=== Cascade + advisory agent, coarse11, test ===
+accuracy=0.9440  macro_f1=0.9418  macro_P=0.9530  macro_R=0.9314
+class                        n       P       R      F1
+technical_app               78   0.932   0.872   0.901
+fraud_security              91   0.930   0.879   0.904
+card_services              327   0.938   0.924   0.931
+general_enquiry            300   0.919   0.943   0.931
+refund_chargeback           62   0.982   0.903   0.941
+other                       29   0.964   0.931   0.947
+payment_failure            552   0.938   0.958   0.948
+billing_charges            293   0.953   0.973   0.963
+account_access             116   0.974   0.966   0.970
+kyc_verification           115   1.000   0.965   0.982
+
+wrote 05-escalation.json

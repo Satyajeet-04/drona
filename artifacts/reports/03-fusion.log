@@ -1,0 +1,64 @@
+alpha=0.0   val acc=0.9072 macroF1=0.8976
+alpha=0.25  val acc=0.9368 macroF1=0.9321
+alpha=0.4   val acc=0.9450 macroF1=0.9427
+alpha=0.5   val acc=0.9480 macroF1=0.9484
+alpha=0.6   val acc=0.9480 macroF1=0.9506
+alpha=0.75  val acc=0.9475 macroF1=0.9501
+alpha=1.0   val acc=0.9450 macroF1=0.9482
+
+selected alpha=0.6 on validation
+
+temp=0.5   val_nll=0.18692 ece=0.0154 mean_conf=0.9609
+temp=0.75  val_nll=0.18081 ece=0.0236 mean_conf=0.9272
+temp=1.0   val_nll=0.20983 ece=0.0647 mean_conf=0.8854
+temp=1.25  val_nll=0.25694 ece=0.1095 mean_conf=0.8390
+temp=1.5   val_nll=0.31489 ece=0.1589 mean_conf=0.7906
+temp=2.0   val_nll=0.44805 ece=0.2543 mean_conf=0.6940
+temp=2.5   val_nll=0.58838 ece=0.3429 mean_conf=0.6054
+temp=3.0   val_nll=0.72409 ece=0.4188 mean_conf=0.5292
+temp=4.0   val_nll=0.96214 ece=0.5331 mean_conf=0.4149
+
+selected temperature=0.75 (min NLL on validation)
+
+--- TEST (coarse11) ---
+linear only    acc=0.9409 macroF1=0.9364
+knn only       acc=0.9256 macroF1=0.9175
+fused          acc=0.9460 macroF1=0.9443
+linear/knn agreement on test: 0.9343
+accuracy when they agree   : 0.9684
+accuracy when they disagree: 0.6279
+
+=== Cascade fusion, coarse11, test ===
+accuracy=0.9460  macro_f1=0.9443  macro_P=0.9531  macro_R=0.9360
+class                        n       P       R      F1
+technical_app               78   0.932   0.885   0.908
+fraud_security              91   0.932   0.901   0.916
+general_enquiry            300   0.921   0.933   0.927
+card_services              327   0.950   0.924   0.936
+refund_chargeback           62   0.966   0.919   0.942
+other                       29   0.964   0.931   0.947
+payment_failure            552   0.938   0.964   0.951
+billing_charges            293   0.953   0.973   0.963
+account_access             116   0.974   0.966   0.970
+kyc_verification           115   1.000   0.965   0.982
+
+coverage curve (target cov / threshold / coverage / escalation / acc-on-accepted / projected):
+  t=0.3329 cov=1.000 esc=0.000 acc=0.9460 e2e=0.9460
+  t=0.5077 cov=0.980 esc=0.020 acc=0.9574 e2e=0.9582
+  t=0.5887 cov=0.960 esc=0.040 acc=0.9655 e2e=0.9669
+  t=0.653  cov=0.940 esc=0.060 acc=0.9724 e2e=0.9740
+  t=0.7062 cov=0.920 esc=0.080 acc=0.9779 e2e=0.9796
+  t=0.7635 cov=0.900 esc=0.100 acc=0.9824 e2e=0.9842
+  t=0.8217 cov=0.870 esc=0.130 acc=0.9854 e2e=0.9873
+  t=0.8485 cov=0.850 esc=0.150 acc=0.9880 e2e=0.9898
+  t=0.9004 cov=0.800 esc=0.200 acc=0.9917 e2e=0.9934
+  t=0.9271 cov=0.750 esc=0.250 acc=0.9939 e2e=0.9954
+  t=0.9454 cov=0.700 esc=0.300 acc=0.9949 e2e=0.9964
+  t=0.9719 cov=0.600 esc=0.400 acc=0.9966 e2e=0.9980
+  t=0.986  cov=0.500 esc=0.500 acc=0.9969 e2e=0.9985
+
+self-check OK: accuracy on accepted rises from 0.9460 (overall, 100% coverage) to 0.9969 at 50.0% coverage (threshold 0.986)
+    test mean confidence 0.9299 vs accuracy 0.9460 -> test ECE 0.0189
+
+wrote 03-fusion.json and models/cascade.joblib
+EXIT=0
