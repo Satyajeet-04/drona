@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -628,7 +629,7 @@ def create_deck():
             p.space_after = Pt(10)
 
     # Output presentation
-    output_path = "/home/satyajeet-rp/drona/DRONA_Project_Presentation.pptx"
+    output_path = str(Path(__file__).resolve().parent / "DRONA_Project_Presentation.pptx")
     prs.save(output_path)
     print(f"Presentation successfully generated at: {output_path}")
 

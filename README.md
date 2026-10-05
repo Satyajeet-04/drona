@@ -82,11 +82,29 @@ and the verifier blocks any reply citing a case number that does not exist.
 
 ## Quickstart
 
+From a fresh clone on any Linux/macOS machine with Python 3.11+ (no GPU, no API
+key, no network access at inference):
+
 ```bash
-./install-ml.sh      # venv + torch (CPU index) + 15 packages, verified
+./install-ml.sh      # venv + the 9 packages the system actually runs on
 ./run.sh test        # 32 passed
 ./run.sh             # API      → http://localhost:8000/docs
 ./run.sh dashboard   # Dashboard → http://localhost:8501
+```
+
+`install-ml.sh` is idempotent (`--clear` on the venv) and portable: it resolves
+its own directory, prefers `uv` if present, and falls back to `python3 -m venv`
++ `pip` if not.
+
+**The default install is deliberately small.** The served model is
+`artifacts/models/cascade.joblib`, loaded with `joblib` — `torch` is *not* on the
+serving path, because `src/drona/agent.py` imports `torch` and `transformers`
+inside functions and nothing at inference calls them (the agent is advisory-only;
+`/health` reports `llm_enabled: false`). Lite mode therefore skips the ~200 MB
+CPU torch wheel. To re-run the DistilBERT comparison experiment instead:
+
+```bash
+./install-ml.sh full # + torch/transformers/onnx — then ~47 min on 2 cores
 ```
 
 Both services bind `0.0.0.0`, so they are reachable from another machine on the LAN at
@@ -97,6 +115,13 @@ One-shot, no server needed:
 ```bash
 ./run.sh "my card was declined twice and money was debited"
 # payment_failure
+```
+
+Expected first-run output, so you can tell a working install from a broken one:
+
+```
+/health  → {"status":"ok","ready":true,"threshold":0.7635,...,"llm_enabled":false}
+POST /triage  → {"category":"billing_charges","confidence":0.8715...}
 ```
 
 ### What to look at
