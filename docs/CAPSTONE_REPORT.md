@@ -61,9 +61,12 @@ own baseline already exceeds the stated goal, so the justification for the
 transformer is undermined by the paper's own experiment.
 
 **2.3 Its compute budget is off by two orders of magnitude.** Measured on the
-target machine (2 cores, ~8 GFLOP/s): DistilBERT fine-tuning costs
-**10.56 s/step** at batch 16 / seq 32 — **693 minutes (11.6 hours) for 3 epochs**,
-for a single configuration. No transformer sweep is affordable.
+target machine (2 cores, ~8 GFLOP/s): fine-tuning at the *specification's* settings
+(batch 16 / seq 32) runs at **10.56 s/step**, i.e. **693 minutes (11.6 hours) for 3
+epochs** — for a single configuration, so no transformer sweep is affordable. This is
+a projection, not our run: the shipped model uses batch 32 / seq 64 / 2 epochs and
+took **47.18 min** (`04-distilbert.json` → `train_minutes`). Both numbers are correct;
+they describe different configurations.
 
 **2.4 Its sequence length is ~4× larger than the data requires.** Tokenising the
 training split: mean **15.9** tokens, p50 13, p95 35, p99 51, max 98.
@@ -109,7 +112,7 @@ only **0.10**, so near-duplicate utterances genuinely carry conflicting labels.
 ticket text
    │
    ├─► sparse retrieval: char+word union TF-IDF, cosine kNN over 9,158
-   │      labelled tickets                              3.9 ms
+   │      labelled tickets                             27.4 ms
    ├─► LinearSVC on the same feature space   ┐
    │                                        ├─► fused, temperature-scaled
    ├─► calibrated kNN vote                  ┘        probability
@@ -133,10 +136,10 @@ ticket text
 
 | System | Accuracy | Macro-F1 | ECE ↓ | Latency/ticket |
 |---|---|---|---|---|
-| kNN retrieval only | 92.56% | 91.75% | 0.079 | 25.0 ms |
+| kNN retrieval only | 92.56% | 91.75% | 0.078 | 27.4 ms |
 | LinearSVC only | 94.09% | 93.64% | — | — |
-| **Fused cascade (α = 0.6, T = 0.75, tuned on val)** | **94.60%** | **94.43%** | **0.019** | 36.3 ms |
-| DistilBERT fine-tuned (synopsis Model 3) | **94.91%** | 94.07% | 0.025 | 69.9 ms |
+| **Fused cascade (α = 0.6, T = 0.75, tuned on val)** | **94.60%** | **94.43%** | **0.017** | 33.3 ms |
+| DistilBERT fine-tuned (synopsis Model 3) | **94.91%** | 94.07% | 0.025 | 105.5 ms |
 
 α and T were selected on the validation split only; the test split was touched
 once. ECE is expected calibration error (15 bins, lower is better).
@@ -414,6 +417,17 @@ Serving and tests go through `run.sh`, which pins `PYTHONPATH` and the thread co
 ./run.sh test         # 32 tests: taxonomy, retrieval, amounts, drift, signals
 ```
 
+Fastest check that the cascade is alive -- one ticket, no server, ~7 s:
+
+```bash
+./run.sh "my card was declined twice and money was debited, urgent"
+# payment_failure
+```
+
+Note that `./run.sh` with **no** argument starts the API server and blocks; the
+one-shot path is reached by passing the ticket text (any argument that is not
+`api`, `dashboard` or `test` is treated as ticket text and classified).
+
 The dashboard is a Streamlit script, not a console entrypoint --
 `python -m drona.dashboard` runs it outside a Streamlit runtime and renders nothing.
 Use `./run.sh dashboard`.
@@ -434,6 +448,10 @@ PYTHONPATH=src python -m drona.experiments.final_comparison # 06 McNemar + agree
 
 Note the report file numbers do not follow the section numbers: §6 (conformal) is
 `08-conformal.json` because conformal was run after the cleanlab audit.
+
+Eight experiment modules produce **nine** JSON artifacts: `02` writes both
+`02-retrieval.json` (the neighbour quality run) and `02-retrieval-oracle.json`
+(the separate oracle-ceiling analysis).
 
 Split seed `20261003`, stratified 70/15/15 on the coarse label. Raw metrics in
 `artifacts/reports/*.json`; literature in `research/0*.md`.
