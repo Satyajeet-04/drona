@@ -199,9 +199,13 @@ class EscalationAgent:
     def sla_policy(self, priority: str) -> int:
         return int(tx.SLA_RESPONSE_MINUTES.get(priority, tx.SLA_RESPONSE_MINUTES["P3"]))
 
-    def money_at_risk(self, signals: TicketSignals | None) -> float:
+    def money_at_risk(self, signals: TicketSignals | dict | None) -> float:
         """Tool: pull the non-text risk figure out of the CRM signal object."""
-        return float(signals.amount_at_risk) if signals else 0.0
+        if not signals:
+            return 0.0
+        if isinstance(signals, dict):
+            return float(signals.get("amount_at_risk", 0.0))
+        return float(getattr(signals, "amount_at_risk", 0.0))
 
     # -- optional LLM backend ---------------------------------------------
     def _ensure_llm(self):
@@ -376,7 +380,7 @@ class EscalationAgent:
 
         # Numbers and reference-like tokens are tracked apart from prose: prose
         # support is a coverage score, identifiers must match exactly.
-        id_pattern = re.compile(r"\b(?:[a-z]{2,4}-\d{4,}|[A-Z]{2,}\d{5,}|\d{6,})\b")
+        id_pattern = re.compile(r"\b(?:[a-z]{2,5}-\d{4,}|[a-z]{2,}\d{4,}|\d{6,})\b", re.IGNORECASE)
         invented: list[str] = []
         for token in id_pattern.findall(draft):
             if token.lower() != reference.lower() and token.lower() not in evidence_text.lower():
@@ -410,6 +414,11 @@ class EscalationAgent:
             "releasable": not invented,
             "claims": claims,
         }
+
+
+def verify(draft: str, retrieved: list[dict], entry: dict, reference: str = "") -> dict:
+    """Top-level convenience function for atomic-fact verification."""
+    return EscalationAgent().verify(draft, retrieved, entry, reference=reference)
 
 
 __all__ = ["EscalationAgent", "AgentTrace", "ToolCall", "KB", "verify"]

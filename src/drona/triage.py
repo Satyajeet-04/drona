@@ -53,7 +53,8 @@ NEGATIVE_TERMS = (
 )
 
 # Currency symbols / words that mark a number as money at risk.
-_CURRENCY = r"(?:rs\.?|inr|₹|rupees?)\s*"
+_CURRENCY = r"(?:rs\.?|inr|₹|rupees?|\$|usd)\s*"
+_POST_CURRENCY = r"\s*(?:rs\.?|inr|₹|rupees?|usd)\b"
 # Indian and international digit grouping: 45,000 / 1,50,000 / 1,000,000.
 # The grouped branch is listed FIRST and requires at least one comma group, so
 # "Rs 45000" cannot be truncated to "450" by the shorter alternative.
@@ -69,12 +70,8 @@ def extract_amount(text: str) -> float:
     A production system would read the amount from the payment gateway, but
     most inbound tickets arrive as prose, so the amount has to be recovered from
     the body. Supports Indian digit grouping (1,50,000), lakh/crore words, the
-    ``45k`` shorthand, and bare `Rs`/`₹`/`INR` prefixes. Returns the **largest**
-    amount found, because a ticket that mentions both a small fee and a large
-    principal is at risk of the large one.
-
-    This is deliberately regex-based and auditable: a wrong amount only shifts
-    one SLA tier, and the reason string records whenever a guess was made.
+    ``45k`` shorthand, and bare `Rs`/`₹`/`INR`/`$` prefixes as well as postfixes.
+    Returns the **largest** amount found.
     """
     low = text.lower()
     amounts: list[float] = []
@@ -86,6 +83,11 @@ def extract_amount(text: str) -> float:
     for m in re.finditer(_K_SUFFIX, low):
         amounts.append(float(m.group(1)) * 1_000)
     for m in re.finditer(_CURRENCY + r"(" + _NUMBER + r")", low):
+        try:
+            amounts.append(float(m.group(1).replace(",", "")))
+        except ValueError:
+            continue
+    for m in re.finditer(r"(" + _NUMBER + r")" + _POST_CURRENCY, low):
         try:
             amounts.append(float(m.group(1).replace(",", "")))
         except ValueError:
@@ -203,6 +205,15 @@ def assign_priority(
     return priority, reasons
 
 
+def determine_deflection(escalate: bool, priority: str, confidence: float, category: str) -> str:
+    """Classify resolution mode: AUTO_DEFLECTED | AGENT_ASSISTED | HUMAN_ESCALATED."""
+    if category == "fraud_security" or priority == "P0":
+        return "HUMAN_ESCALATED"
+    if escalate or confidence < 0.7635:
+        return "AGENT_ASSISTED"
+    return "AUTO_DEFLECTED"
+
+
 @dataclass
 class TriageResult:
     """Everything the API, the dashboard and the audit log need."""
@@ -223,13 +234,12 @@ class TriageResult:
     draft_reply: str = ""
     verification: dict = field(default_factory=dict)
     latency_ms: float = 0.0
-    # The agent's reasoning trace, surfaced so a reviewer can see why a ticket
-    # was routed where it was rather than being shown a bare label.
     trace: list = field(default_factory=list)
-    # The agent's proposed decision, shown to the reviewer but never applied.
-    # See engine.py: experiment 05 measured the agent as worse than the cascade
-    # on its own escalation slice, so it advises rather than decides.
     agent_proposal: dict | None = None
+    # Hackathon & enterprise extensions:
+    deflection_status: str = "AUTO_DEFLECTED"  # AUTO_DEFLECTED | AGENT_ASSISTED | HUMAN_ESCALATED
+    entities: dict = field(default_factory=dict)
+    action_checklist: list[str] = field(default_factory=list)
 
 
 __all__ = [
@@ -237,6 +247,8 @@ __all__ = [
     "TriageResult",
     "assign_priority",
     "sentiment",
+    "extract_amount",
+    "determine_deflection",
     "URGENCY_TERMS",
     "PRIORITIES",
     "route",

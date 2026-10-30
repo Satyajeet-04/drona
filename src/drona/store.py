@@ -69,6 +69,18 @@ class Store:
         self.conn = sqlite3.connect(self.path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
+        # Migrate columns for new hackathon capabilities if missing
+        cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(tickets)").fetchall()}
+        if "deflection" not in cols:
+            try:
+                self.conn.execute("ALTER TABLE tickets ADD COLUMN deflection TEXT DEFAULT 'AUTO_DEFLECTED'")
+            except Exception:
+                pass
+        if "entities_json" not in cols:
+            try:
+                self.conn.execute("ALTER TABLE tickets ADD COLUMN entities_json TEXT")
+            except Exception:
+                pass
         self.conn.commit()
 
     # -- identifiers -------------------------------------------------------
@@ -92,21 +104,37 @@ class Store:
     # -- writes ------------------------------------------------------------
     def record(self, ticket_id: str, text: str, result: dict, trace=None) -> None:
         verify = json.dumps(result.get("verification", {}))
-        trace_json = json.dumps(
-            [{"kind": k, "message": m} for k, m in getattr(trace, "steps", [])]
-        ) if trace is not None else None
+        if trace is not None:
+            trace_json = json.dumps(
+                [{"kind": k, "message": m} for k, m in getattr(trace, "steps", [])]
+            )
+        elif result.get("trace"):
+            raw = result.get("trace", [])
+            formatted = [
+                {"kind": t[0], "message": t[1]} if isinstance(t, (list, tuple)) and len(t) == 2
+                else (t if isinstance(t, dict) else {"kind": "info", "message": str(t)})
+                for t in raw
+            ]
+            trace_json = json.dumps(formatted)
+        else:
+            trace_json = None
+
+        deflection = result.get("deflection_status", "AUTO_DEFLECTED")
+        entities_json = json.dumps(result.get("entities", {}))
+
         self.conn.execute(
             """INSERT OR REPLACE INTO tickets
                (ticket_id, text, category, priority, queue, confidence, escalated,
                 latency_ms, created_at, agent_category, agent_priority, draft_reply,
-                trace_json, verify_json)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                trace_json, verify_json, deflection, entities_json)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 ticket_id, text, result.get("category"), result.get("priority"),
                 result.get("queue"), result.get("confidence"),
                 int(bool(result.get("escalate"))), result.get("latency_ms"),
                 time.time(), result.get("category"), result.get("priority"),
                 result.get("draft_reply", ""), trace_json, verify,
+                deflection, entities_json,
             ),
         )
         self.conn.commit()
@@ -213,6 +241,40 @@ class Store:
             "n_reference": total_ref,
             "sufficient_sample": enough,
             "note": None if enough else f"need >= {min_live} triaged tickets to judge drift",
+        }
+
+    def analytics(self) -> dict:
+        """Aggregate operational analytics for hackathon dashboards and reporting."""
+        c = self.conn
+        total = c.execute("SELECT COUNT(*) n FROM tickets").fetchone()["n"]
+        if not total:
+            return {
+                "total": 0,
+                "deflection_rate": 0.0,
+                "by_priority": {},
+                "by_queue": {},
+                "by_deflection": {},
+                "avg_latency_ms": 0.0,
+            }
+
+        by_priority = {r["priority"]: r["n"] for r in c.execute(
+            "SELECT priority, COUNT(*) n FROM tickets GROUP BY priority"
+        ).fetchall()}
+        by_queue = {r["queue"]: r["n"] for r in c.execute(
+            "SELECT queue, COUNT(*) n FROM tickets GROUP BY queue"
+        ).fetchall()}
+        by_deflection = {r["deflection"] or "AUTO_DEFLECTED": r["n"] for r in c.execute(
+            "SELECT deflection, COUNT(*) n FROM tickets GROUP BY deflection"
+        ).fetchall()}
+        auto_deflected = by_deflection.get("AUTO_DEFLECTED", 0)
+
+        return {
+            "total": total,
+            "deflection_rate": round(auto_deflected / total, 4) if total else 0.0,
+            "by_priority": by_priority,
+            "by_queue": by_queue,
+            "by_deflection": by_deflection,
+            "avg_latency_ms": round(c.execute("SELECT AVG(latency_ms) a FROM tickets").fetchone()["a"] or 0.0, 2),
         }
 
 

@@ -99,12 +99,12 @@ def triage_batch(req: BatchRequest) -> dict:
     engine = get_engine()
     store = get_store()
     results = []
-    for text in req.texts:
-        # Allocate a real audit id per ticket. Without this the batch path
-        # returned empty ticket_ids, which broke traceability back to the
-        # SQLite store and made batch results unreviewable via /review.
+    signals_list = req.signals or []
+    for i, text in enumerate(req.texts):
+        # Allocate a real audit id per ticket and map signals if provided
         ticket_id = store.next_id()
-        result = engine.triage(text, ticket_id=ticket_id)
+        sig = signals_list[i].model_dump() if i < len(signals_list) and signals_list[i] else None
+        result = engine.triage(text, sig, ticket_id=ticket_id)
         store.record(ticket_id, text, _as_dict(result))
         results.append(_as_dict(result))
     return {"n": len(results), "results": results}
@@ -136,6 +136,11 @@ def review(req: ReviewRequest) -> dict:
 def metrics() -> dict:
     store = get_store()
     return {"engine": get_engine().metrics(), "operations": store.stats()}
+
+
+@app.get("/analytics")
+def analytics() -> dict:
+    return get_store().analytics()
 
 
 @app.get("/drift")

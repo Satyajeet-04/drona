@@ -157,7 +157,8 @@ def knn_predict(
     """Convenience wrapper used by the experiment scripts."""
     retriever = KnnRetriever(train_texts, train_labels)
     probs, nbrs = retriever.vote(texts, k=15, view="union")
-    pred = retriever.labels[np.argmax(probs, axis=1)]
+    classes = np.unique(retriever.labels)
+    pred = classes[np.argmax(probs, axis=1)]
     conf = probs.max(axis=1)
     stats = {
         "mean_top1_similarity": float(np.mean([n.top_score for n in nbrs])),

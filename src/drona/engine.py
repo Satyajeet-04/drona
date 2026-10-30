@@ -29,8 +29,9 @@ from .agent import EscalationAgent
 from .cascade import Cascade
 from .config import MODELS, PROCESSED
 from .data import load_jsonl
+from .entities import extract_entities, get_action_checklist
 from .retrieval import KnnRetriever
-from .triage import TicketSignals, TriageResult, assign_priority
+from .triage import TicketSignals, TriageResult, assign_priority, determine_deflection
 
 
 def _as_signals(signals) -> TicketSignals:
@@ -131,6 +132,9 @@ class TriageEngine:
             reason = f"calibrated confidence {confidence:.2f} below threshold {self.threshold}"
 
         priority, explanation = assign_priority(category, text, _as_signals(signals))
+        ent = extract_entities(text, amount_fallback=float(explanation.get("amount_at_risk", 0.0)))
+        checklist = get_action_checklist(category)
+        deflection = determine_deflection(escalate, priority, confidence, category)
 
         result = TriageResult(
             text=text,
@@ -146,6 +150,9 @@ class TriageEngine:
             escalated_because=reason,
             explanation=explanation,
             neighbours=neighbours,
+            deflection_status=deflection,
+            entities=ent.to_dict(),
+            action_checklist=checklist,
         )
 
         if escalate and self.agent is not None:
@@ -155,7 +162,7 @@ class TriageEngine:
                 retrieved=neighbours,
                 category=category,
                 priority=priority,
-                signals=signals,
+                signals=_as_signals(signals),
                 reference=ticket_id or "",
             )
             # ADVISORY ONLY -- deliberately does NOT overwrite the cascade's
@@ -184,8 +191,10 @@ class TriageEngine:
         # trace all differ per row, so batching only the classifier would save
         # little while adding a second code path that needs its own testing.
         # Kept as a loop; correctness over a premature ~10% throughput win.
-        signals = signals or [None] * len(texts)
-        return [self.triage(t, s) for t, s in zip(texts, signals)]
+        signals_list = list(signals) if signals else []
+        if len(signals_list) < len(texts):
+            signals_list.extend([None] * (len(texts) - len(signals_list)))
+        return [self.triage(t, s) for t, s in zip(texts, signals_list)]
 
     def metrics(self) -> dict:
         """Self-reported card for the dashboard's health strip."""

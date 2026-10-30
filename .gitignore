@@ -26,3 +26,4 @@ install-ml.log
 # deck build output: slide PNGs rendered for a visual check. The deck
 # itself (DRONA_capstone_deck.pptx) is committed; these are derived from it.
 deck/preview/
+.~lock.*#

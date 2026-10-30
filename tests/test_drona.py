@@ -260,3 +260,216 @@ def test_none_signals_still_produce_a_usable_explanation():
     p, why = assign_priority("billing_charges", "you overcharged me", None)
     assert p.startswith("P")
     assert why["amount_source"] in ("none", "text_extracted", "signal")
+
+
+# --------------------------------------------------------------------------
+# knn_predict label indexing regression test
+# --------------------------------------------------------------------------
+
+
+def test_knn_predict_returns_correct_unique_class_labels():
+    from drona.retrieval import knn_predict
+
+    train_texts = [
+        "card payment failed at checkout",
+        "card payment failed at checkout",
+        "app is crashing on open",
+        "app is crashing on open",
+    ]
+    train_labels = np.array(["payment_failure", "payment_failure", "technical_app", "technical_app"])
+    pred, conf, _ = knn_predict(["app is crashing on open"], train_texts, train_labels)
+    assert pred[0] == "technical_app"
+    assert conf[0] > 0.5
+
+
+# --------------------------------------------------------------------------
+# agent & verification
+# --------------------------------------------------------------------------
+
+
+def test_agent_verify_exports_and_runs():
+    from drona.agent import verify, EscalationAgent
+
+    entry = {
+        "policy": "A transaction that shows as failed but debited is treated as a reconciliation case.",
+        "action": "Confirm transaction reference and run reconciliation check.",
+        "escalate_to": "Payments Operations",
+        "customer_facing": "We are checking reference {ref}. Reversals occur within one working day.",
+    }
+    retrieved = [{"text": "payment failed debited", "label": "payment_failure", "similarity": 0.85}]
+    draft = "We are checking reference DRN-100050. Reversals occur within one working day."
+    report = verify(draft, retrieved, entry, reference="DRN-100050")
+    assert report["supported"] > 0
+    assert report["fact_precision"] > 0.5
+    assert report["releasable"] is True
+    assert len(report["invented_identifiers"]) == 0
+
+
+def test_agent_verify_detects_invented_identifiers():
+    from drona.agent import verify
+
+    entry = {
+        "policy": "Standard refund policy.",
+        "action": "Initiate refund.",
+        "escalate_to": "Billing",
+        "customer_facing": "Your refund is processed.",
+    }
+    draft = "Your case TXN-999999 has been approved for refund under reference FAKE-12345."
+    report = verify(draft, [], entry, reference="DRN-0001")
+    assert "TXN-999999" in report["invented_identifiers"] or "FAKE-12345" in report["invented_identifiers"]
+    assert report["releasable"] is False
+
+
+# --------------------------------------------------------------------------
+# entities & postfix currency
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("amount debited 25000 rs from account", 25_000),
+        ("lost 50000 rupees in scam", 50_000),
+        ("charged 1200 inr fee", 1_200),
+        ("deducted $500 twice", 500),
+    ],
+)
+def test_extract_amount_supports_postfix_currencies(text, expected):
+    got = extract_amount(text)
+    assert got == expected, f"{text!r} -> {got}, expected {expected}"
+
+
+def test_extract_entities_discovers_domain_signals():
+    from drona.entities import extract_entities, get_action_checklist
+
+    sample = (
+        "My payment failed on UPI txn-9876543210 with error ERR-502 on Visa card ending in 4321. "
+        "Amount was debited 15000 rs."
+    )
+    ent = extract_entities(sample, amount_fallback=15000.0)
+    d = ent.to_dict()
+    assert "txn-9876543210" in [t.lower() for t in d["transaction_ids"]]
+    assert "ERR-502" in d["error_codes"]
+    assert "UPI" in d["payment_rails"]
+    assert "Visa Card" in d["payment_rails"]
+    assert "•••• 4321" in d["masked_accounts"]
+    assert d["amount"] == 15000.0
+
+    checklist = get_action_checklist("payment_failure")
+    assert len(checklist) >= 3
+
+
+# --------------------------------------------------------------------------
+# deflection & store analytics
+# --------------------------------------------------------------------------
+
+
+def test_determine_deflection_modes():
+    from drona.triage import determine_deflection
+
+    assert determine_deflection(escalate=False, priority="P2", confidence=0.92, category="card_services") == "AUTO_DEFLECTED"
+    assert determine_deflection(escalate=True, priority="P2", confidence=0.65, category="billing_charges") == "AGENT_ASSISTED"
+    assert determine_deflection(escalate=False, priority="P0", confidence=0.95, category="payment_failure") == "HUMAN_ESCALATED"
+    assert determine_deflection(escalate=False, priority="P1", confidence=0.98, category="fraud_security") == "HUMAN_ESCALATED"
+
+
+def test_store_persists_trace_and_analytics(tmp_path):
+    from drona import store as store_mod
+
+    st = store_mod.Store(tmp_path / "test_store.sqlite")
+    tid = st.next_id()
+    st.record(
+        tid,
+        "unauthorized charge",
+        {
+            "category": "fraud_security",
+            "priority": "P0",
+            "queue": "security-response",
+            "confidence": 0.95,
+            "escalate": True,
+            "latency_ms": 42.0,
+            "deflection_status": "HUMAN_ESCALATED",
+            "trace": [("thought", "investigating security risk"), ("action", "alert_fraud()")],
+            "entities": {"error_codes": ["ERR-401"]},
+        },
+    )
+    row = st.recent(1)[0]
+    assert row["ticket_id"] == tid
+    assert row["deflection"] == "HUMAN_ESCALATED"
+    assert "investigating security risk" in row["trace_json"]
+
+    # Review
+    st.review(tid, approved=True, category="fraud_security", priority="P0", note="confirmed")
+    assert st.recent(1)[0]["approved"] == 1
+
+    # Analytics
+    an = st.analytics()
+    assert an["total"] == 1
+    assert "fraud_security" in an["by_priority"] or "P0" in an["by_priority"]
+
+
+# --------------------------------------------------------------------------
+# FastAPI service integration tests
+# --------------------------------------------------------------------------
+
+
+def test_service_endpoints():
+    from fastapi.testclient import TestClient
+    from drona.service import app
+
+    client = TestClient(app)
+
+    # Health
+    r_health = client.get("/health")
+    assert r_health.status_code == 200
+    assert r_health.json()["status"] == "ok"
+
+    # Single triage
+    r_triage = client.post(
+        "/triage",
+        json={"text": "payment declined on card ending in 1234 with error ERR-502 debited 12000 rs"},
+    )
+    assert r_triage.status_code == 200
+    t_data = r_triage.json()
+    assert "ticket_id" in t_data
+    assert "category" in t_data
+    assert "deflection_status" in t_data
+    assert "entities" in t_data
+    tid = t_data["ticket_id"]
+
+    # Batch triage with signals
+    r_batch = client.post(
+        "/triage/batch",
+        json={
+            "texts": [
+                "card was charged twice",
+                "cannot login to my account",
+            ],
+            "signals": [
+                {"channel": "email", "amount_at_risk": 50000.0},
+                {"channel": "chat", "customer_tier": "enterprise"},
+            ],
+        },
+    )
+    assert r_batch.status_code == 200
+    b_data = r_batch.json()
+    assert b_data["n"] == 2
+    assert len(b_data["results"]) == 2
+
+    # Queues
+    r_queues = client.get("/queues")
+    assert r_queues.status_code == 200
+    assert "queues" in r_queues.json()
+
+    # Review
+    r_rev = client.post(
+        "/review",
+        json={"ticket_id": tid, "approved": True, "category": t_data["category"], "priority": t_data["priority"]},
+    )
+    assert r_rev.status_code == 200
+    assert r_rev.json()["approved"] is True
+
+    # Analytics
+    r_analytics = client.get("/analytics")
+    assert r_analytics.status_code == 200
+    assert "deflection_rate" in r_analytics.json()
